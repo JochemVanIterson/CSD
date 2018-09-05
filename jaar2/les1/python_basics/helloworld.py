@@ -1,1 +1,2 @@
-print("Hello World")
+name = input("Vul je naam in: ");
+print("Hallo", name)
