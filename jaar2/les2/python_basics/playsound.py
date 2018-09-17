@@ -1,21 +1,33 @@
+# command: python3 playsound.py 4 1 0.5 1.5 0.5 120
+
 # ------------------------------------------- Imports ------------------------------------------- #
 import os, fnmatch
 import sys
 import simpleaudio as sa
 import time
 
+# ------------------------------------------- Variables ----------------------------------------- #
+numPlaybackTimes = int(sys.argv[1])
+sequence = sys.argv[2:2+numPlaybackTimes]
+BPM = int(sys.argv[-1])
+print('numPlaybackTimes', numPlaybackTimes)
+print('sequence', str(sequence))
+print('BPM', BPM)
+
 # ------------------------------------------- Functions ----------------------------------------- #
 def playFile(filename):
     wave_obj = sa.WaveObject.from_wave_file(filename)
     play_obj = wave_obj.play()
-    # play_obj.wait_done()
 
 def repeatPlay(chosenfile, times):
     while(times>0):
-        print("playing")
-        playFile(chosenfile)
+        for note in sequence:
+            playFile(chosenfile)
+            time.sleep(note2time(float(note)))
         times -= 1
-        time.sleep(.5)
+
+def note2time(note):
+    return (60./BPM)*note
 
 # ------------------------------------------- File list ----------------------------------------- #
 audiofiles = []
