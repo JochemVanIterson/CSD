@@ -6,6 +6,18 @@ import sys
 import simpleaudio as sa
 import time
 
+# ------------------------------------------- error when not enough arguments ------------------- #
+if len(sys.argv)==1:
+    print("This project requires commandline input")
+    print("Usage:  (number of notes) (note times the number given before) (bpm)")
+    print("Example: 4                 1 .5 1.5 1 (4 numbers)               120")
+    exit()
+elif len(sys.argv)!=int(sys.argv[1])+3:
+    print("Arguments not correct")
+    print("Usage:  (number of notes) (note times the number given before) (bpm)")
+    print("Example: 4                 1 .5 1.5 1 (4 numbers)               120")
+    exit()
+
 # ------------------------------------------- Variables ----------------------------------------- #
 # ['playsound.py', '4', '1', '.5', '1.5', '1', '150']
 numPlaybackTimes = int(sys.argv[1]) # take second var from array
