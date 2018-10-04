@@ -96,18 +96,29 @@ class SamplePlayback:
         if wait:
             play_obj.wait_done()
         return play_obj
+class BeatGenerator:
+    global beatUnit, beatPerMeasure, beat16Amount, positions
+    def __init__(self, measure):
+        self.beatPerMeasure = int(measure.split('/')[0])
+        self.beatUnit = int(measure.split('/')[1])
+        self.beat16Amount = 1/(self.beatUnit/16) # convert unit to amount of 16th
+        self.positions = self.beatPerMeasure*self.beat16Amount # set total amount of 16th
+
+    def createBeat(self):
+        lowBeat = self.__createLow()
+        return lowBeat
+
+    def __createLow(self):
+        print(self.positions)
 
 # ------------------------------------------- Vars ---------------------------------------------- #
 bpm = 110
 measure = ''
 possibleMeasures = ['5/4', '5/8', '7/8', 'other']
-audioFilePath = "../pythonExamples/audio/01_audioFiles/audioFiles/"
-# audioFilePath = "."
+audioFilePath = "../pythonExamples/audio/01_audioFiles/audioFiles/" # "." for current folder
 listAudiofiles = listAudiofilesBuilder(audioFilePath)
 
-sampleHigh = '';
-sampleMid  = '';
-sampleLow  = '';
+global sampleHigh, sampleMid, sampleLow
 
 # --------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------ Programm ----------------------------------------------- #
@@ -154,3 +165,6 @@ time.sleep(.4)
 print("  sampleLow: ", sampleNameLow)
 sampleLow.play(True)
 time.sleep(.4)
+
+generator = BeatGenerator(measure)
+generator.createBeat()
