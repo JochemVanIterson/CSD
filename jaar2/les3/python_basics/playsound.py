@@ -9,6 +9,25 @@ import time
 def playFile(wave_obj):
     play_obj = wave_obj.play()
 
+def playSequence(wave_obj, timestamps):
+    rawTimestamps = timestamps.copy()
+    timestamp = timestamps.pop(0) # retrieve first timestamp
+    startTime = time.time() # retrieve the startime: current time
+    keepPlaying = True
+    # play the sequence
+    while keepPlaying:
+        currentTime = time.time() # retrieve current time
+        if(currentTime - startTime >= timestamp): # check if the timestamp's time is passed
+            wave_obj.play() # play sample
+            if timestamps: # if there are timestamps left in the timestamps list
+                timestamp = timestamps.pop(0) # retrieve the next timestamp
+            else:
+                keepPlaying = False # list is empty, stop loop
+        else:
+            time.sleep(0.001) # wait for a very short moment
+    time.sleep(2)
+
+
 def repeatPlay(wave_obj, times):
     while(times>0):
         for note in sequence:
@@ -102,11 +121,12 @@ for x in range(0, times):
     repeatedSequence += sequence
 timestampsList16 = durationsToTimestamps16th(repeatedSequence)
 timestampsList = timestamps16thToTimestamps(timestampsList16, bpm)
-print(timestampsList)
+print("timestampsList:", timestampsList)
 
 # ------------------------------------------- Playback ------------------------------------------ #
 chosenfile = audiofiles[fileindex]
 wave_obj = sa.WaveObject.from_wave_file(chosenfile)
-repeatPlay(wave_obj, times)
+# repeatPlay(wave_obj, times)
+playSequence(wave_obj, timestampsList)
 
 print("Done playing. Goodbye!!")
