@@ -286,11 +286,33 @@ time.sleep(.4)
 generator = BeatGenerator(measure)
 generator.status()
 
-print("\n------------------------- Playing --------------------------")
-beat = generator.createBeat()
-repeatedBeat = generator.createRepeatedStamps(repeatTimes)
-print(beat[0])
-playSequence(repeatedBeat[1])
+while(True): # Loop for repeated creation and playback of beats
+    print("\n---------------------- Creating beat -----------------------")
+    beat = generator.createBeat()
+    repeatedBeat = generator.createRepeatedStamps(repeatTimes)
+    playSequence(repeatedBeat[1])
+    print("(r)  Play again")
+    print("(y)  Convert to Midi and create new beat")
+    print("(yq) Convert to Midi and quit program")
+    print("(n)  Create new beat")
+    print("(q)  Quit program")
+
+    while(True): # Action checkup
+        action = input("Save? ")
+        if(action=='r'):
+            playSequence(repeatedBeat[1])
+        if(action=='y' or action=='yq' or action=='n' or action=='q'):
+            break
+    if(action=='y'):
+        print("Saving...")
+        # TODO: convert beat to midi
+    if(action=='yq'):
+        print("Saving...")
+        # TODO: convert beat to midi
+        break
+    if(action=='q'):
+        break
+
 # print(beat)
-print("Done playing")
-time.sleep(2)
+print("Quit program")
+time.sleep(.5)
