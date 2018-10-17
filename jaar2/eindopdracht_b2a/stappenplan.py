@@ -1,13 +1,15 @@
 '''
 01. BPM input
-02. Keuze uit maatsoorten (5/4, 7/8, 9/8, etc.)
-03. Samples?
+02. repeatTimes
+03. Keuze uit maatsoorten (5/4, 7/8, 9/8, etc.)
+04. Samples?
     Hoog
     Laag
     Midden
-04. Beat generator
-05. Player (2x)
-06. Save?
+05. Beat generator
+06. Player (repeat)
+07. Save?
+    'r':    Nog een keer spelen
     'y':    converteer naar MIDI
             Terug naar (04.)
     'yq':   converteer naar MIDI
