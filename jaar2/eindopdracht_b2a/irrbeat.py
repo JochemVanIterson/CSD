@@ -97,19 +97,104 @@ class SamplePlayback:
             play_obj.wait_done()
         return play_obj
 class BeatGenerator:
-    global beatUnit, beatPerMeasure, beat16Amount, positions
+    global beatUnit, beatPerMeasure, beat16Amount, positions, beatAccents, notesPerAccent, accentMap
+    global lowBeat, midBeat, highBeat
     def __init__(self, measure):
         self.beatPerMeasure = int(measure.split('/')[0])
         self.beatUnit = int(measure.split('/')[1])
         self.beat16Amount = 1/(self.beatUnit/16) # convert unit to amount of 16th
         self.positions = self.beatPerMeasure*self.beat16Amount # set total amount of 16th
+        self.beatAccents = random.randint(2, 4)
+        self.notesPerAccent = int(self.positions/self.beatAccents)
+        self.accentMap = self.__createAccentMap()
+
+    def __createAccentMap(self):
+        outputarray = []
+        nthAccent = 0
+        for i in range(0, int(self.positions)):
+            accentPosition = i%self.notesPerAccent
+            if(accentPosition==0):
+                nthAccent+=1
+            if(nthAccent>self.beatAccents):
+                accentPosition+=self.notesPerAccent
+            outputarray.append(accentPosition)
+        return outputarray
+    def __createLow(self):
+        outputarray = []
+        for i, value in enumerate(self.accentMap):
+            randomvalue = random.uniform(0, 1.0)
+            if (value==0):
+                if (randomvalue<0.8):
+                    outputarray.append(i)
+            elif (value==2) :
+                if (randomvalue<0.4):
+                    outputarray.append(i)
+            elif (randomvalue<0.1):
+                outputarray.append(i)
+        return outputarray
+    def __createMid(self):
+        outputarray = []
+        for i, value in enumerate(self.accentMap):
+            randomvalue = random.uniform(0, 1.0)
+            if (value==2):
+                if (randomvalue<0.7):
+                    outputarray.append(i)
+            elif (value==0) :
+                if (randomvalue<0.5):
+                    outputarray.append(i)
+            elif (randomvalue<0.2):
+                outputarray.append(i)
+        return outputarray
+    def __createHigh(self):
+        outputarray = []
+        for i, value in enumerate(self.accentMap):
+            randomvalue = random.uniform(0, 1.0)
+            if (randomvalue<0.7):
+                outputarray.append(i)
+        return outputarray
+    def __buildEventList(self, times, lowBeat, midBeat, highBeat):
+        events = [[y] for y in range(int(self.positions)*times)]
+        for repeatTime in range(0, times):
+            offset = int(repeatTime*self.positions)
+            for lowIndex in lowBeat:
+                events[offset+lowIndex].append("l")
+            for midIndex in midBeat:
+                events[offset+midIndex].append("m")
+            for highIndex in highBeat:
+                events[offset+highIndex].append("h")
+        return events
+    def __eventsToTimestamps(self, inputList, bpm):
+        sixteenthNoteDuration = (60./bpm)*.25
+        timestamps = []
+        for event in inputList:
+            if(len(event)>1):
+                newEvent = [event[0]*sixteenthNoteDuration]
+                newEvent.extend(event[1:])
+                timestamps.append(newEvent)
+        return timestamps
 
     def createBeat(self):
-        lowBeat = self.__createLow()
-        return lowBeat
+        self.lowBeat = self.__createLow()
+        self.midBeat = self.__createMid()
+        self.highBeat = self.__createHigh()
+        events = self.__buildEventList(1, self.lowBeat, self.midBeat, self.highBeat)
+        timestamps = self.__eventsToTimestamps(events, bpm)
+        return events, timestamps
 
-    def __createLow(self):
-        print(self.positions)
+    def createRepeatedStamps(self, times):
+        events = self.__buildEventList(times, self.lowBeat, self.midBeat, self.highBeat)
+        timestamps = self.__eventsToTimestamps(events, bpm)
+        return events, timestamps
+
+    def status(self):
+        print("\n------------------- BeatGenerator Status -------------------")
+        print("beatPerMeasure: ", self.beatPerMeasure)
+        print("beatUnit:       ", self.beatUnit)
+        print("beat16Amount:   ", self.beat16Amount)
+        print("positions:      ", self.positions)
+        print("beatAccents:    ", self.beatAccents)
+        print("notesPerAccent: ", self.notesPerAccent)
+        print("accentMap:      ", self.accentMap)
 
 # ------------------------------------------- Vars ---------------------------------------------- #
 bpm = 110
