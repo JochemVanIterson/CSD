@@ -1,4 +1,4 @@
-# python3 irrbeat.py
+# python3 irrbeat.py < input.txt
 
 # --------------------------------------------------------------------------------------------------------- #
 # ------------------------------------------------ INIT --------------------------------------------------- #
@@ -20,16 +20,48 @@ def listAudiofilesBuilder(dir):
             audiofiles.append(entry)
     return audiofiles
 
+def playSequence(timestampsRaw):
+    timestamps = timestampsRaw.copy()
+    timestamp = timestamps.pop(0) # retrieve first timestamp
+    startTime = time.time() # retrieve the startime: current time
+    keepPlaying = True
+    # play the sequence
+    while keepPlaying:
+        currentTime = time.time() # retrieve current time
+        if(currentTime - startTime >= timestamp[0]): # check if the timestamp's time is passed
+            if 'l' in timestamp: # Play low sample
+                sampleLow.play()
+            if 'm' in timestamp: # Play mid sample
+                sampleMid.play()
+            if 'h' in timestamp: # Play high sample
+                sampleHigh.play()
+
+            if timestamps: # if there are timestamps left in the timestamps list
+                timestamp = timestamps.pop(0) # retrieve the next timestamp
+            else:
+                keepPlaying = False # list is empty, stop loop
+        else:
+            time.sleep(0.001) # wait for a very short moment
+
 # -------- UI -------- #
 def UI_BPM():
     while True:
         try:
             bpmStr = input("BPM? (default = "+str(bpm)+") ")
             if(bpmStr==""):
-                # bpm=120 # delault value
                 return bpm
             else:
                 return int(bpmStr)
+        except ValueError:
+            print("The given value wasn't a number")
+def UI_repeat():
+    while True:
+        try:
+            repeatTimesStr = input("Repeat? (default = "+str(repeatTimes)+") ")
+            if(repeatTimesStr==""):
+                return repeatTimes
+            else:
+                return int(repeatTimesStr)
         except ValueError:
             print("The given value wasn't a number")
 def UI_measure():
@@ -199,7 +231,8 @@ class BeatGenerator:
 # ------------------------------------------- Vars ---------------------------------------------- #
 bpm = 110
 measure = ''
-possibleMeasures = ['5/4', '5/8', '7/8', 'other']
+repeatTimes = 4
+possibleMeasures = ['5/4', '5/8', '7/8', '8/8', '9/8', 'other']
 audioFilePath = "../pythonExamples/audio/01_audioFiles/audioFiles/" # "." for current folder
 listAudiofiles = listAudiofilesBuilder(audioFilePath)
 
@@ -210,11 +243,9 @@ global sampleHigh, sampleMid, sampleLow
 # --------------------------------------------------------------------------------------------------------- #
 
 # ------------------------------------------- UI questions -------------------------------------- #
-# ---------- BPM -------------- #
-bpm = UI_BPM()
-
-# ---------- Measure ---------- #
-measure = UI_measure()
+bpm = UI_BPM() # ------------------ BPM -------------- #
+repeatTimes = UI_repeat() # ------- Repeat ----------- #
+measure = UI_measure() # ---------- Measure ---------- #
 
 # ---------- Samples ---------- #
 if UI_randomSample():
@@ -236,9 +267,10 @@ sampleMid  = SamplePlayback(sampleNameMid)
 sampleLow  = SamplePlayback(sampleNameLow)
 
 # ------------------------------------------- Chosen Values ------------------------------------- #
-print("")
-print("BPM:", bpm)
-print("measure:", measure)
+print("\n---------------------- Chosen values -----------------------")
+print("BPM:    ", bpm)
+print("Repeat: ", repeatTimes)
+print("Measure:", measure)
 
 print("Samples:")
 print("  sampleHigh:", sampleNameHigh)
@@ -252,4 +284,13 @@ sampleLow.play(True)
 time.sleep(.4)
 
 generator = BeatGenerator(measure)
-generator.createBeat()
+generator.status()
+
+print("\n------------------------- Playing --------------------------")
+beat = generator.createBeat()
+repeatedBeat = generator.createRepeatedStamps(repeatTimes)
+print(beat[0])
+playSequence(repeatedBeat[1])
+# print(beat)
+print("Done playing")
+time.sleep(2)
