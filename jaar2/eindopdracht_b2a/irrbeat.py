@@ -7,6 +7,7 @@
 # ------------------------------------------- Imports ------------------------------------------- #
 import os, fnmatch
 import simpleaudio as sa
+import wave, numpy, struct
 import time
 import random
 import math
@@ -123,13 +124,28 @@ def UI_selectSample(name):
 
 class SamplePlayback:
     def __init__(self, filepath):
-        self.wave_obj = sa.WaveObject.from_wave_file(filepath)
+        # self.wave_obj = sa.WaveObject.from_wave_file(filepath)
+        wave_read = wave.open(filepath, 'rb')
+        wave_params = wave_read.getparams()
+        wave_framesNR = wave_params[3] # number of frames
+        wave_buffer = wave_read.readframes(wave_framesNR)
 
-    def play(self, wait=False):
-        play_obj = self.wave_obj.play()
+        wave_buffer_softer = numpy.fromstring(wave_buffer, numpy.int16)//4  # half amplitude
+        wave_buffer_softer = struct.pack('h'*len(wave_buffer), *wave_buffer)
+
+        self.wave_obj_acc = sa.WaveObject(wave_buffer, wave_params[0], wave_params[1], wave_params[2])
+        self.wave_obj     = sa.WaveObject(wave_buffer_softer, wave_params[0], wave_params[1], wave_params[2])
+
+    def play(self, accent=False, wait=False):
+        if(accent):
+            play_obj = self.wave_obj_acc.play()
+        else:
+            play_obj = self.wave_obj.play()
+
         if wait:
             play_obj.wait_done()
         return play_obj
+
 class BeatGenerator:
     global beatUnit, beatPerMeasure, beat16Amount, positions, beatAccents, notesPerAccent, accentMap
     global lowBeat, midBeat, highBeat
@@ -308,13 +324,13 @@ print("Measure:", measure)
 # preview of chosen samples
 print("Samples:")
 print("  sampleHigh:", sampleNameHigh)
-sampleHigh.play(True)
+sampleHigh.play(True, True)
 time.sleep(.4)
 print("  sampleMid: ", sampleNameMid)
-sampleMid.play(True)
+sampleMid.play(True, True)
 time.sleep(.4)
 print("  sampleLow: ", sampleNameLow)
-sampleLow.play(True)
+sampleLow.play(True, True)
 time.sleep(.4)
 
 # init the beat generator with the chosen settings
