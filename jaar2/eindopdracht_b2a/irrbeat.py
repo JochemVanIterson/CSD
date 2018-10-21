@@ -9,6 +9,8 @@ import os, fnmatch
 import simpleaudio as sa
 import time
 import random
+import math
+from midiutil import MIDIFile # https://pypi.org/project/MIDIUtil/
 
 # ------------------------------------------- Functions ----------------------------------------- #
 def listAudiofilesBuilder(dir):
@@ -212,12 +214,12 @@ class BeatGenerator:
         events = self.__buildEventList(1, self.lowBeat, self.midBeat, self.highBeat)
         timestamps = self.__eventsToTimestamps(events, bpm)
         return events, timestamps
-
     def createRepeatedStamps(self, times):
         events = self.__buildEventList(times, self.lowBeat, self.midBeat, self.highBeat)
         timestamps = self.__eventsToTimestamps(events, bpm)
         return events, timestamps
-
+    def measureInfo(self):
+        return self.beatUnit, self.beatPerMeasure, self.beat16Amount, self.positions, self.beatAccents, self.notesPerAccent, self.accentMap
     def status(self):
         print("\n------------------- BeatGenerator Status -------------------")
         print("beatPerMeasure: ", self.beatPerMeasure)
@@ -227,7 +229,38 @@ class BeatGenerator:
         print("beatAccents:    ", self.beatAccents)
         print("notesPerAccent: ", self.notesPerAccent)
         print("accentMap:      ", self.accentMap)
+class MidiExport:
+    global midiExportFile
+    midinote_l = 36
+    midinote_m = 38
+    midinote_h = 42
 
+    def __init__(self, generator):
+        self.midiExportFile = MIDIFile(2)
+                                  # (track, time, tempo)
+        self.midiExportFile.addTempo(1000, 0, bpm)
+        numerator = generator.beatPerMeasure
+        denominator = int(math.log(generator.beatUnit, 2))
+        clocksPerTick = int(24*(4/generator.beatUnit))
+        self.midiExportFile.addTimeSignature(1000, 0, numerator, denominator, clocksPerTick)
+
+    def export(self, sequence, filename):
+        sixteenthNoteDuration = (60./bpm)*.25
+        for event in sequence:
+            print(event[1:])
+            if(len(event)>1):
+                for sound in event[1:]:
+                    if sound is "l":
+                        pitch = self.midinote_l
+                    elif sound is "m":
+                        pitch = self.midinote_m
+                    elif sound is "h":
+                        pitch = self.midinote_h
+                                             # (track, channel, pitch, time, duration, volume)
+                    self.midiExportFile.addNote(0, 9, pitch, event[0]*.25, .25, 100)
+
+        with open(filename+".mid", "wb") as output_file:
+            self.midiExportFile.writeFile(output_file)
 # ------------------------------------------- Vars ---------------------------------------------- #
 bpm = 110
 measure = ''
@@ -272,6 +305,7 @@ print("BPM:    ", bpm)
 print("Repeat: ", repeatTimes)
 print("Measure:", measure)
 
+# preview of chosen samples
 print("Samples:")
 print("  sampleHigh:", sampleNameHigh)
 sampleHigh.play(True)
@@ -283,6 +317,7 @@ print("  sampleLow: ", sampleNameLow)
 sampleLow.play(True)
 time.sleep(.4)
 
+# init the beat generator with the chosen settings
 generator = BeatGenerator(measure)
 generator.status()
 
@@ -301,13 +336,23 @@ while(True): # Loop for repeated creation and playback of beats
         action = input("Save? ")
         if(action=='r'):
             playSequence(repeatedBeat[1])
-        if(action=='y' or action=='yq' or action=='n' or action=='q'):
+        elif(action=='y' or action=='yq' or action=='n' or action=='q'):
             break
+        else:
+            print("unknown option")
     if(action=='y'):
         print("Saving...")
+        print(beat[0])
+        midiExporter = MidiExport(generator)
+        filename = input("Filename: ")
+        midiExporter.export(beat[0], filename)
         # TODO: convert beat to midi
     if(action=='yq'):
         print("Saving...")
+        print(beat[0])
+        midiExporter = MidiExport(generator)
+        filename = input("Filename: ")
+        midiExporter.export(beat[0], filename)
         # TODO: convert beat to midi
         break
     if(action=='q'):
