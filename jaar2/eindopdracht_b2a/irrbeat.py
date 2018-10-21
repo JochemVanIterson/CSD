@@ -33,11 +33,11 @@ def playSequence(timestampsRaw):
         currentTime = time.time() # retrieve current time
         if(currentTime - startTime >= timestamp[0]): # check if the timestamp's time is passed
             if 'l' in timestamp: # Play low sample
-                sampleLow.play()
+                sampleLow.play(timestamp[1]==0)
             if 'm' in timestamp: # Play mid sample
-                sampleMid.play()
+                sampleMid.play(timestamp[1]==0)
             if 'h' in timestamp: # Play high sample
-                sampleHigh.play()
+                sampleHigh.play(timestamp[1]==0)
 
             if timestamps: # if there are timestamps left in the timestamps list
                 timestamp = timestamps.pop(0) # retrieve the next timestamp
@@ -124,14 +124,12 @@ def UI_selectSample(name):
 
 class SamplePlayback:
     def __init__(self, filepath):
-        # self.wave_obj = sa.WaveObject.from_wave_file(filepath)
         wave_read = wave.open(filepath, 'rb')
         wave_params = wave_read.getparams()
         wave_framesNR = wave_params[3] # number of frames
         wave_buffer = wave_read.readframes(wave_framesNR)
 
-        wave_buffer_softer = numpy.fromstring(wave_buffer, numpy.int16)//4  # half amplitude
-        wave_buffer_softer = struct.pack('h'*len(wave_buffer), *wave_buffer)
+        wave_buffer_softer = numpy.fromstring(wave_buffer, numpy.int16)//2  # half amplitude
 
         self.wave_obj_acc = sa.WaveObject(wave_buffer, wave_params[0], wave_params[1], wave_params[2])
         self.wave_obj     = sa.WaveObject(wave_buffer_softer, wave_params[0], wave_params[1], wave_params[2])
@@ -203,7 +201,7 @@ class BeatGenerator:
                 outputarray.append(i)
         return outputarray
     def __buildEventList(self, times, lowBeat, midBeat, highBeat):
-        events = [[y] for y in range(int(self.positions)*times)]
+        events = [[y, self.accentMap[y%len(self.accentMap)]] for y in range(int(self.positions)*times)]
         for repeatTime in range(0, times):
             offset = int(repeatTime*self.positions)
             for lowIndex in lowBeat:
@@ -218,8 +216,8 @@ class BeatGenerator:
         timestamps = []
         for event in inputList:
             if(len(event)>1):
-                newEvent = [event[0]*sixteenthNoteDuration]
-                newEvent.extend(event[1:])
+                newEvent = [event[0]*sixteenthNoteDuration, event[1]]
+                newEvent.extend(event[2:])
                 timestamps.append(newEvent)
         return timestamps
 
@@ -234,8 +232,6 @@ class BeatGenerator:
         events = self.__buildEventList(times, self.lowBeat, self.midBeat, self.highBeat)
         timestamps = self.__eventsToTimestamps(events, bpm)
         return events, timestamps
-    def measureInfo(self):
-        return self.beatUnit, self.beatPerMeasure, self.beat16Amount, self.positions, self.beatAccents, self.notesPerAccent, self.accentMap
     def status(self):
         print("\n------------------- BeatGenerator Status -------------------")
         print("beatPerMeasure: ", self.beatPerMeasure)
@@ -250,6 +246,7 @@ class MidiExport:
     midinote_l = 36
     midinote_m = 38
     midinote_h = 42
+    midinote_ho = 46
 
     def __init__(self, generator):
         self.midiExportFile = MIDIFile(2)
@@ -263,17 +260,19 @@ class MidiExport:
     def export(self, sequence, filename):
         sixteenthNoteDuration = (60./bpm)*.25
         for event in sequence:
-            print(event[1:])
-            if(len(event)>1):
-                for sound in event[1:]:
+            if(len(event)>2):
+                for sound in event[2:]:
                     if sound is "l":
                         pitch = self.midinote_l
+                        amp = 110 if event[1]==0 else 80
                     elif sound is "m":
                         pitch = self.midinote_m
+                        amp = 110 if event[1]==0 else 80
                     elif sound is "h":
                         pitch = self.midinote_h
+                        amp = 80
                                              # (track, channel, pitch, time, duration, volume)
-                    self.midiExportFile.addNote(0, 9, pitch, event[0]*.25, .25, 100)
+                    self.midiExportFile.addNote(0, 9, pitch, event[0]*.25, .25, amp)
 
         with open(filename+".mid", "wb") as output_file:
             self.midiExportFile.writeFile(output_file)
@@ -362,18 +361,15 @@ while(True): # Loop for repeated creation and playback of beats
         midiExporter = MidiExport(generator)
         filename = input("Filename: ")
         midiExporter.export(beat[0], filename)
-        # TODO: convert beat to midi
     if(action=='yq'):
         print("Saving...")
         print(beat[0])
         midiExporter = MidiExport(generator)
         filename = input("Filename: ")
         midiExporter.export(beat[0], filename)
-        # TODO: convert beat to midi
         break
     if(action=='q'):
         break
 
-# print(beat)
 print("Quit program")
 time.sleep(.5)
