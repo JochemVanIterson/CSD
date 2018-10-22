@@ -4,23 +4,26 @@ import random
 from random import randint
 
 
-samples = [sa.WaveObject.from_wave_file("hihat.wav"),
-           sa.WaveObject.from_wave_file("kick.wav"),
-           sa.WaveObject.from_wave_file("snare.wav")]
+samples = [sa.WaveObject.from_wave_file("../../pythonExamples/audio/01_audioFiles/audioFiles/snare.wav"),
+           sa.WaveObject.from_wave_file("../../pythonExamples/audio/01_audioFiles/audioFiles/kick.wav"),
+           sa.WaveObject.from_wave_file("../../pythonExamples/audio/01_audioFiles/audioFiles/hat.wav")]
 
 print ("what sample do you wanna play? you can choose from snare.wav or kick.wav or hihat.wav or combinations")
 samplesToPlay = []
 
 sound = input()
-if (sound == "kick.wav"):
-	samplesToPlay.append(sa.WaveObject.from_wave_file("kick.wav"))
-elif (sound == "snare.wav"):
- 	samplesToPlay.append(sa.WaveObject.from_wave_file("snare.wav"))
+if (sound == "kick"):
+	samplesToPlay.append(samples[1])
+elif (sound == "snare"):
+ 	samplesToPlay.append(samples[0])
 elif (sound == "hihat"):
- 	samplesToPlay.append(sa.WaveObject.from_wave_file("hihat.wav"))
+ 	samplesToPlay.append(samples[2])
 elif (sound == "combinations"):
 	samplesToPlay.extend(samples)
 	random.shuffle(samplesToPlay)
+else:
+    print("wrong input")
+    exit()
 
 print ("good")
 print ("what bpm do you wanna play with? please keep in mind you can only insert intergers as bpm values")
@@ -91,7 +94,7 @@ def playsequence (timestampssequence):
 		#elapsedTime= currenttime - starttime
 		if(currentTime - startTime >= timestamp):
 			#playsample
-			if len(samplesToPlay) != 0:
+			if len(samplesToPlay) > 0:
 				randomValue = randint(0, len(samplesToPlay)-1)
 			else:
 				randomValue = 0
