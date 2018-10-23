@@ -13,6 +13,13 @@ import random
 import math
 from midiutil import MIDIFile # https://pypi.org/project/MIDIUtil/
 
+import warnings
+warnings.simplefilter("ignore", DeprecationWarning)
+
+# Clear screen, only on works on mac
+os.system('clear')
+print("Jochem's geweldige irregular beat generator")
+
 # ------------------------------------------- Functions ----------------------------------------- #
 def listAudiofilesBuilder(dir):
     audiofiles = []
@@ -75,13 +82,18 @@ def UI_measure():
             measureInput = possibleMeasures[int(input("Measure? "))]
             if measureInput is 'other':
                 while True:
-                    measureRaw = input("fill in measure: (n/n) ")
-                    if '/' not in measureRaw:
-                        print("Wrong format, use (n/n)")
-                    elif len(measureRaw.split('/')) is not 2:
-                        print("Too many '/', use (n/n)")
-                    else:
-                        return measureRaw
+                    try:
+                        measureRaw = input("fill in measure: (n/n) ")
+                        if '/' not in measureRaw:
+                            print("Wrong format, use (n/n)")
+                        elif len(measureRaw.split('/')) is not 2:
+                            print("Too many '/', use (n/n)")
+                        else:
+                            measure = int(measureRaw.split('/')[0])
+                            unit    = int(measureRaw.split('/')[1])
+                            return measureRaw
+                    except ValueError:
+                        print("The given value wasn't a number")
                 break
             else:
                 return measureInput
