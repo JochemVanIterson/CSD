@@ -1,5 +1,4 @@
 #include <map>
-#include <string>
 #include "note2midi.h"
 
 int note2midi::c(std::string input){
