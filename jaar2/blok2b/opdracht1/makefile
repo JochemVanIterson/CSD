@@ -1,21 +1,18 @@
-# the compiler: gcc for C program, define as g++ for C++
-CC = g++
+$(shell mkdir -p build/)
 
-# compiler flags:
-#  -g    adds debugging information to the executable file
-#  -Wall turns on most, but not all, compiler warnings
-CFLAGS  = -Wall
+all: build/opdracht1
 
-# the build target executable:
-SOURCE = src/main.cpp
-TARGETFOLDER = build/
-TARGET = opdracht1
+build/opdracht1: build/main.o build/instrument.o build/dbgPrint.o
+	g++ -o build/opdracht1 build/main.o build/instrument.o build/dbgPrint.o
 
-all: $(TARGETFOLDER)$(TARGET)
+build/main.o: src/main.cpp
+	g++ -c -o build/main.o src/main.cpp
 
-$(TARGETFOLDER)$(TARGET): $(SOURCE)
-	mkdir -p $(TARGETFOLDER)
-	$(CC) $(CFLAGS) -o $(TARGETFOLDER)$(TARGET) $(SOURCE)
+build/instrument.o: src/instrument.cpp src/instrument.h
+	g++ -c -o build/instrument.o src/instrument.cpp
+
+build/dbgPrint.o: src/dbgPrint/dbgPrint.cpp src/dbgPrint/dbgPrint.h
+	g++ -c -o build/dbgPrint.o src/dbgPrint/dbgPrint.cpp
 
 clean:
-	$(RM) -R $(TARGETFOLDER)
+	rm -R build/

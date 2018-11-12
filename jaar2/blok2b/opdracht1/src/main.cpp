@@ -1,8 +1,8 @@
 #include <iostream>
 #include <string>
 
-#include "dbgPrint/dbgPrint.cpp"
-#include "instrument.cpp"
+#include "dbgPrint/dbgPrint.h"
+#include "instrument.h"
 
 int main() {
   Instrument inst1 = Instrument("test1");
