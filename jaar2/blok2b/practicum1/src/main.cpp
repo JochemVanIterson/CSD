@@ -4,6 +4,8 @@
 #include "Car.h"
 
 int main() {
+  std::cout << "############################## Mooie auto ##############################" << std::endl;
+  //             Brand,   Color,  Speed, Direction
   Car mooieAuto("Volvo", "groen", 1, 0);
   std::cout << "Color: " << mooieAuto.getColor() << std::endl;
   std::cout << "Speed: " << mooieAuto.getSpeed() << std::endl;
