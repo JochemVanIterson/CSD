@@ -1,3 +1,4 @@
+#include <iostream>
 class dbgPrint {
   public:
     static void d(std::string key, std::string message);

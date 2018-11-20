@@ -1,5 +1,5 @@
 #include <iostream>
-#include "dbgPrint.h"
+#include "dbgPrint.hpp"
 
 void dbgPrint::d(std::string key, std::string message){
   std::cout << key << ": "  << message << std::endl; // dbg out

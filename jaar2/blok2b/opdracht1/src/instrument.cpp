@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "instrument.h"
+#include "instrument.hpp"
 
 Instrument::Instrument(std::string soundid) {
   sound = soundid;
