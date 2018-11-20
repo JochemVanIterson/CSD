@@ -1,18 +1,27 @@
-$(shell mkdir -p build/)
+OUTDIR = build/
+OUT    = $(OUTDIR)opdracht2
+CXX    = g++
+CFLAGS = -Wall -std=c++14
+ODIR   = $(OUTDIR)obj
+SDIR   = src
+INC    = -Iinc
 
-all: build/opdracht1
+all: mkdir $(OUT)
 
-build/opdracht1: build/main.o build/instrument.o build/dbgPrint.o
-	g++ -o build/opdracht1 build/main.o build/instrument.o build/dbgPrint.o
+_OBJS = main.o instrument.o
+OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
-build/main.o: src/main.cpp
-	g++ -c -o build/main.o src/main.cpp
+$(ODIR)/%.o: $(SDIR)/%.cpp
+	$(CXX) $(CFLAGS) -c $(INC) -o $@ $< $(CFLAGS)
 
-build/instrument.o: src/instrument.cpp src/instrument.h
-	g++ -c -o build/instrument.o src/instrument.cpp
+$(OUT): $(OBJS)
+	$(CXX) $(LDFLAGS) -o $(OUT) $^
 
-build/dbgPrint.o: src/dbgPrint/dbgPrint.cpp src/dbgPrint/dbgPrint.h
-	g++ -c -o build/dbgPrint.o src/dbgPrint/dbgPrint.cpp
+.PHONY: clean
+
+mkdir:
+	$(shell mkdir -p $(OUTDIR))
+	$(shell mkdir -p $(ODIR))
 
 clean:
-	rm -R build/
+	rm -f -R $(OUTDIR)
