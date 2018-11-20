@@ -25,6 +25,10 @@ int Melody::getNote(){
 }
 void Melody::addNote(int note){
   std::cout << readIndex << ":" << writeIndex << std::endl;
+  if(note<=0){
+    std::cout << "Negative note " << note << std::endl;
+    return;
+  }
   if(writeIndex!=(readIndex-1)){
     notes[writeIndex] = note;
     writeIndex = (writeIndex+1) % NUM_NOTES;

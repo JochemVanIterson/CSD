@@ -24,6 +24,7 @@ int main(){
   melody.printList();
   melody.addNote(47);
 
+  melody.addNote(-97);
   melody.addNote(97);
   melody.addNote(62);
   melody.addNote(15);
