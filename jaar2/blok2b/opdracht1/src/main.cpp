@@ -16,5 +16,6 @@ int main() {
   std::cout << "\nRoll playback" << std::endl; // stringout
   inst1.roll(5);
   inst2.roll(2);
+  inst2.roll(-1);
   return 0;
 }

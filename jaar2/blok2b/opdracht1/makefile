@@ -1,5 +1,5 @@
 OUTDIR = build/
-OUT    = $(OUTDIR)opdracht2
+OUT    = $(OUTDIR)opdracht1
 CXX    = g++
 CFLAGS = -Wall -std=c++14
 ODIR   = $(OUTDIR)obj

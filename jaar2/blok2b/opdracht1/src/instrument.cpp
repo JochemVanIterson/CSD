@@ -12,6 +12,10 @@ bool Instrument::makeSound(){
   return true;
 }
 bool Instrument::roll(int amount){
+  if(amount<=0){
+    std::cout << "\nNegative amount" << std::endl;
+    return false;
+  }
   for ( int walker = 0; walker<amount; walker++ ) {
     makeSound();
   }
