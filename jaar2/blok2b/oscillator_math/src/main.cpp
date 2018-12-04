@@ -43,7 +43,8 @@ std::vector<std::string> split(const std::string &s, char delim) {
 
 int main(int argc,char **argv){
   std::string type = "sine";
-  int frequency = 220;
+  double frequency = 220;
+  double amplitude = 1.0;
   static bool debug = false;
   bool csvout = false;
 
@@ -54,13 +55,14 @@ int main(int argc,char **argv){
     int option_index = 0;
     static struct option long_options[] = {
       {"frequency", required_argument,  0,  'f' },
+      {"amplitude", required_argument,  0,  'a' },
       {"type",      required_argument,  0,  't' },
       {"debug",     no_argument,        0,   1  },
       {"csvout",    no_argument,        0,   2  },
       {0,           0,                  0,   0  }
     };
 
-    c = getopt_long(argc, argv, "f:t:0", long_options, &option_index);
+    c = getopt_long(argc, argv, "f:a:t:0", long_options, &option_index);
     if (c == -1)
       break;
 
@@ -73,7 +75,10 @@ int main(int argc,char **argv){
         break;
 
       case 'f':
-        frequency = atoi(optarg);
+        frequency = atof(optarg);
+        break;
+      case 'a':
+        amplitude = atof(optarg);
         break;
 
       case 't':
@@ -104,10 +109,11 @@ int main(int argc,char **argv){
 
   // ------------------ arguments log -------------------- //
   std::cout << "Settings:" << std::endl;
-  std::cout << "\ttype: " << type  << std::endl;
-  std::cout << "\tfrequency: " << frequency  << std::endl;
-  std::cout << "\tdebug: " << debug  << std::endl;
-  std::cout << "\tcsvout: " << csvout  << std::endl;
+  std::cout << "   type: " << type  << std::endl;
+  std::cout << "   frequency: " << frequency << std::endl;
+  std::cout << "   amplitude: " << amplitude << std::endl;
+  std::cout << "   debug: " << debug  << std::endl;
+  std::cout << "   csvout: " << csvout  << std::endl;
   std::cout << std::endl;
 
   // ------------------ CSV output -------------------- //
@@ -134,7 +140,7 @@ int main(int argc,char **argv){
   }
   double samplerate = jack.getSamplerate();
   if(debug)std::cout << "samplerate: " << samplerate << std::endl;
-  static Oscillator oscSine(samplerate, frequency, 1.0, type, debug);
+  static Oscillator oscSine(samplerate, frequency, amplitude, type, debug);
 
   //assign a function to the JackModule::onProces
   jack.onProcess = [](jack_default_audio_sample_t *inBuf, jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
@@ -148,27 +154,36 @@ int main(int argc,char **argv){
   jack.autoConnect();
 
   //keep the program running and listen for user input, q = quit
-  std::cout << "Press 'q' when you want to quit the program.\n";
+  std::cout << "Options:" << std::endl;
+  std::cout << "   Set frequency:\tfreq <value>" << std::endl;
+  std::cout << "   Set amplitude:\tamp <value>" << std::endl;
+  // std::cout << "   Set waveform:\twave <sine|square|saw|triangle|m_square|m_saw>" << std::endl;
+  std::cout << "   Quit program:\tq" << std::endl;
   bool running = true;
   while (running) {
     std::string cinValue;
-    std::cin >> cinValue;
-
+    std::cout << ":";
+    getline(std::cin, cinValue);
     std::vector<std::string> splitElements = split(cinValue,' ');
 
-    std::string token = splitElements.at(0);
-    std::cout << "Input: " << cinValue << std::endl;
-    std::cout << "Token: " << token << std::endl;
-    std::cout << "Value: " << splitElements.at(1) << std::endl;
-    // std::string token = cinValue.substr(0, cinValue.find(delimiter));
+    std::string token = splitElements[0];
 
     if(token=="q"){
       running = false;
       break;
-    } else if(token=="freq"){
-      // std::string value = splitElements.at(1);
-      // std::cout << "Frequency: " << splitElements << std::endl;
     }
+
+    std::string value = splitElements[1];
+    if(token=="freq"){
+      oscSine.setFrequency(std::stod(value));
+      // std::cout << "Frequency: " << value << std::endl;
+    } else if(token=="amp"){
+      oscSine.setAmplitude(std::stod(value));
+      // std::cout << "Amplitude: " << value << std::endl;
+    } else if(token=="wave"){
+      type = value;
+      std::cout << "Waveform: " << value << std::endl;
+   }
   }
 
   return 0;

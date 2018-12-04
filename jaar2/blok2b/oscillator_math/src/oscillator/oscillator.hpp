@@ -18,6 +18,9 @@ public:
   void setFrequency(double frequency);
   double getFrequency();
 
+  void setAmplitude(double amplitude);
+  double getAmplitude();
+
   // Funcs
   double calc();
   void tick();

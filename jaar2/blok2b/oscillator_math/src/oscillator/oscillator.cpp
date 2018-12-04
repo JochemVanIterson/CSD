@@ -8,6 +8,7 @@ Oscillator::Oscillator(){}
 
 Oscillator::Oscillator(double samplerate, double baseFrequency, double amplitude, std::string type, bool debug){
   if(debug)std::cout << "Oscillator::Oscillator() Constructor type: " << type << std::endl;
+  this->debug = debug;
   this->baseFrequency = baseFrequency;
   this->amplitude = amplitude;
   generateHarmonics(type);
@@ -39,6 +40,13 @@ void Oscillator::setFrequency(double frequency){
 }
 double Oscillator::getFrequency(){
   return baseFrequency;
+}
+
+void Oscillator::setAmplitude(double amplitude){
+  this->amplitude = amplitude;
+}
+double Oscillator::getAmplitude(){
+  return amplitude;
 }
 
 double Oscillator::calc(){
