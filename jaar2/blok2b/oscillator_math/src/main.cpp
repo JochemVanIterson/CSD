@@ -190,6 +190,8 @@ int main(int argc,char **argv){
       else if(value=="false")debug=false;
       oscSine.setDebug(debug);
       if(debug)std::cout << "Debug: " << (debug?"true":"false") << std::endl;
+    } else {
+      std::cout << "Command '" << token << "' with value '" << value << "' not found" << std::endl;
     }
   }
   return 0;
