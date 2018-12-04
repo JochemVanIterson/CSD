@@ -8,20 +8,14 @@ Oscillator::Oscillator(){}
 
 Oscillator::Oscillator(double samplerate, double baseFrequency, double amplitude, std::string type, bool debug){
   if(debug)std::cout << "Oscillator::Oscillator() Constructor type: " << type << std::endl;
-  this->debug = debug;
+  this->samplerate = samplerate;
   this->baseFrequency = baseFrequency;
   this->amplitude = amplitude;
+  this->type = type;
+  this->debug = debug;
+
   generateHarmonics(type);
-  for (int i=0; i<MAX_HAMRONICS; i++){
-    if(type=="m_square"){
-      harmonics[i] = new Generator(samplerate, baseFrequency*harmFreqs[i], harmAmps[i], "square");
-    } else if(type=="m_saw"){
-      harmonics[i] = new Generator(samplerate, baseFrequency*harmFreqs[i], harmAmps[i], "saw");
-    } else {
-      harmonics[i] = new Generator(samplerate, baseFrequency*harmFreqs[i], harmAmps[i], "sine");
-    }
-    if(debug)std::cout << "harmonics: " << harmFreqs[i]<< " : 1/"<< 1.0/harmAmps[i] << std::endl;
-  }
+  setHarmonics(type);
 }
 
 Oscillator::~Oscillator(){
@@ -49,6 +43,19 @@ double Oscillator::getAmplitude(){
   return amplitude;
 }
 
+void Oscillator::setType(std::string type){
+  this->type = type;
+  for (int i=0; i<MAX_HAMRONICS; i++){
+    delete harmonics[i];
+  }
+  generateHarmonics(type);
+  setHarmonics(type);
+}
+
+void Oscillator::setDebug(bool debug){
+  this->debug = debug;
+}
+
 double Oscillator::calc(){
   double value = 0;
   for (int i=0; i<MAX_HAMRONICS; i++){
@@ -69,6 +76,10 @@ void Oscillator::generateHarmonics(std::string type){
   if(type=="sine" || type=="m_square" || type=="m_saw"){
     harmFreqs[0] = 1.0;
     harmAmps[0] = 1.0;
+    for (int i=1; i<MAX_HAMRONICS; i++){
+      harmFreqs[i] = 0;
+      harmAmps[i] = 0.;
+    }
   } else if(type=="saw"){
     for (int i=0; i<MAX_HAMRONICS; i++){
       harmFreqs[i] = (i+1);
@@ -85,7 +96,17 @@ void Oscillator::generateHarmonics(std::string type){
       harmAmps[i] = 1.0/(harmFreqs[i]*harmFreqs[i]);
     }
   }
-  for (int i=0; i<MAX_HAMRONICS; i++){
+}
 
+void Oscillator::setHarmonics(std::string type){
+  for (int i=0; i<MAX_HAMRONICS; i++){
+    if(type=="m_square"){
+      harmonics[i] = new Generator(samplerate, baseFrequency*harmFreqs[i], harmAmps[i], "square");
+    } else if(type=="m_saw"){
+      harmonics[i] = new Generator(samplerate, baseFrequency*harmFreqs[i], harmAmps[i], "saw");
+    } else {
+      harmonics[i] = new Generator(samplerate, baseFrequency*harmFreqs[i], harmAmps[i], "sine");
+    }
+    if(debug)std::cout << "harmonics: " << harmFreqs[i]<< " : 1/"<< 1.0/harmAmps[i] << std::endl;
   }
 }

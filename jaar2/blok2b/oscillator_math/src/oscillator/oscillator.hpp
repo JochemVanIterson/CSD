@@ -21,19 +21,26 @@ public:
   void setAmplitude(double amplitude);
   double getAmplitude();
 
+  void setType(std::string type);
+  void setDebug(bool debug);
+
   // Funcs
   double calc();
   void tick();
 private:
   // Vars
-  bool   debug;
-  double amplitude;
+  double samplerate;
   double baseFrequency;
+  double amplitude;
+  std::string type;
+  bool   debug;
+
   double harmFreqs[MAX_HAMRONICS] = {0.0};
   double harmAmps[MAX_HAMRONICS] = {0.0};
   Generator** harmonics = new Generator*[MAX_HAMRONICS];
 
   void generateHarmonics(std::string type);
+  void setHarmonics(std::string type);
 };
 
 #endif

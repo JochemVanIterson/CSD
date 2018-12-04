@@ -42,9 +42,9 @@ std::vector<std::string> split(const std::string &s, char delim) {
 }
 
 int main(int argc,char **argv){
-  std::string type = "sine";
   double frequency = 220;
   double amplitude = 1.0;
+  std::string type = "sine";
   static bool debug = false;
   bool csvout = false;
 
@@ -109,11 +109,11 @@ int main(int argc,char **argv){
 
   // ------------------ arguments log -------------------- //
   std::cout << "Settings:" << std::endl;
-  std::cout << "   type: " << type  << std::endl;
   std::cout << "   frequency: " << frequency << std::endl;
   std::cout << "   amplitude: " << amplitude << std::endl;
-  std::cout << "   debug: " << debug  << std::endl;
-  std::cout << "   csvout: " << csvout  << std::endl;
+  std::cout << "   type: " << type  << std::endl;
+  std::cout << "   debug: " << (debug?"true":"false") << std::endl;
+  std::cout << "   csvout: " << (csvout?"true":"false")  << std::endl;
   std::cout << std::endl;
 
   // ------------------ CSV output -------------------- //
@@ -157,8 +157,9 @@ int main(int argc,char **argv){
   std::cout << "Options:" << std::endl;
   std::cout << "   Set frequency:\tfreq <value>" << std::endl;
   std::cout << "   Set amplitude:\tamp <value>" << std::endl;
-  // std::cout << "   Set waveform:\twave <sine|square|saw|triangle|m_square|m_saw>" << std::endl;
-  std::cout << "   Quit program:\tq" << std::endl;
+  std::cout << "   Set waveform:\ttype <sine|square|saw|triangle|m_square|m_saw>" << std::endl;
+  std::cout << "   Set debug:\t\tdebug <true|false>" << std::endl;
+  std::cout << "   Quit program:\tq|quit|exit" << std::endl;
   bool running = true;
   while (running) {
     std::string cinValue;
@@ -168,7 +169,7 @@ int main(int argc,char **argv){
 
     std::string token = splitElements[0];
 
-    if(token=="q"){
+    if(token=="q"|token=="quit"|token=="exit"){
       running = false;
       break;
     }
@@ -176,15 +177,20 @@ int main(int argc,char **argv){
     std::string value = splitElements[1];
     if(token=="freq"){
       oscSine.setFrequency(std::stod(value));
-      // std::cout << "Frequency: " << value << std::endl;
+      if(debug)std::cout << "Frequency: " << value << std::endl;
     } else if(token=="amp"){
       oscSine.setAmplitude(std::stod(value));
-      // std::cout << "Amplitude: " << value << std::endl;
-    } else if(token=="wave"){
+      if(debug)std::cout << "Amplitude: " << value << std::endl;
+    } else if(token=="type"){
       type = value;
-      std::cout << "Waveform: " << value << std::endl;
-   }
+      oscSine.setType(type);
+      if(debug)std::cout << "Waveform: " << value << std::endl;
+    } else if(token=="debug"){
+      if(value=="true")debug=true;
+      else if(value=="false")debug=false;
+      oscSine.setDebug(debug);
+      if(debug)std::cout << "Debug: " << (debug?"true":"false") << std::endl;
+    }
   }
-
   return 0;
 }
