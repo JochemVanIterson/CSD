@@ -1,7 +1,7 @@
 OUTDIR  = build/
 OUT     = $(OUTDIR)oscillator_math
 CXX     = g++
-CFLAGS  = -Wall -std=c++14
+CFLAGS  = -I/usr/local/include -Wall -std=c++14
 LDFLAGS = -ljack
 ODIR    = $(OUTDIR)obj
 SDIR    = src
@@ -14,10 +14,10 @@ OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp
 	if [ ! -d $(@D) ]; then mkdir -p $(@D); fi
-	$(CXX) $(CFLAGS) -c $(INC) -o $@ $< $(CFLAGS)
+	$(CXX) $(CFLAGS) -c $(INC) -o $@ $<
 
 $(OUT): $(OBJS)
-	$(CXX) $(LDFLAGS) -o $(OUT) $^
+	$(CXX) $(CFLAGS) -o $(OUT) $^ $(LDFLAGS)
 
 .PHONY: clean
 

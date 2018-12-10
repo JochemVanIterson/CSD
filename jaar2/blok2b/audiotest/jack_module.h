@@ -11,6 +11,8 @@
 #include <string>
 #include <jack/jack.h>
 
+#include <functional>
+
 class JackModule
 {
 public:
