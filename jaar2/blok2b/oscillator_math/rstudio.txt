@@ -1,0 +1,3 @@
+> library(readr)
+> example <- read_csv("stack/HKU/CSD/jaar2/blok2b/oscillator_math/csvout.csv")
+> plot(example)
