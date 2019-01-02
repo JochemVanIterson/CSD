@@ -13,17 +13,18 @@
 
 class Marcov : public Melody{
 public:
-  Marcov();
+  Marcov(int marcovSize);
   ~Marcov();
 
   int getNote();
   void learnMarcov(std::string filename);
   void printAlgorithm();
 private:
+  int marcovSize;
   std::map<std::string, std::map<std::string, int>> marcov_alg;
   std::vector<int> note_history;
-  std::string array2string(int writableArray[], int size, std::string delimiter);
-  void array_insert_end(int array[], int size, int value);
+  std::string array2string(std::vector<int> &writableArray, std::string delimiter);
+  void array_insert_end(std::vector<int> &array, int maxsize, int value);
 };
 
 #endif

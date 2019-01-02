@@ -1,12 +1,11 @@
 #include "marcov.h"
 
-#define MARCOVSIZE 3
-
 // -------------------------------------------------------------------------- //
 // ------------------------ Constructor & Destructor ------------------------ //
 // -------------------------------------------------------------------------- //
-Marcov::Marcov():Melody(){
+Marcov::Marcov(int marcovSize):Melody(){
   std::cout << "Marcov::Marcov()" << std::endl;
+  this->marcovSize = marcovSize;
 }
 Marcov::~Marcov(){
   std::cout << "Marcov::~Marcov()" << std::endl;
@@ -31,7 +30,7 @@ void Marcov::learnMarcov(std::string filename){
 
   int tracks = midifile.getTrackCount();
   for (int track=0; track<tracks; track++) {
-    int marcov_hist[MARCOVSIZE] = {};
+    std::vector<int> marcov_hist(marcovSize);
     std::string marcov_hist_str = "leeg";
 
     // --------------- Convert from midi events to note list --------------- //
@@ -43,32 +42,34 @@ void Marcov::learnMarcov(std::string filename){
 
     // --------------- Generate Marcov algorithm --------------- //
     // Ignores the first few notes (MARCOVSIZE), and adds those at the end
-    for(int walker = 0; walker<(notes.size()+MARCOVSIZE); walker++){
+    for(int walker = 0; walker<(notes.size()+marcovSize); walker++){
       int walkerMod = walker % notes.size();
       int note = notes[walkerMod];
-      marcov_hist_str = array2string(marcov_hist, MARCOVSIZE, ",");
-      if(marcov_hist[0]!=0){
+      marcov_hist_str = array2string(marcov_hist, ",");
+      std::cout << marcov_hist_str << std::endl;
+      if(marcov_hist.size()!=0 && marcov_hist[0]!=0){
         marcov_alg[marcov_hist_str][std::to_string(note)]++;
         std::cout << walkerMod << " -> " << "inserted: " << marcov_hist_str << " Note:" << note << std::endl;
       }
-      array_insert_end(marcov_hist, MARCOVSIZE, note);
+      array_insert_end(marcov_hist, marcovSize, note);
     }
   }
   printAlgorithm();
 }
-std::string Marcov::array2string(int writableArray[], int size, std::string delimiter){
+std::string Marcov::array2string(std::vector<int> &writableArray, std::string delimiter){
   std::string stringValue = "";
-  for(int walker = 0; walker<size; walker++){
+  for(int walker = 0; walker<writableArray.size(); walker++){
     if(stringValue != "")stringValue.append(delimiter);
     stringValue.append(std::to_string(writableArray[walker]));
   }
   return stringValue;
 }
-void Marcov::array_insert_end(int array[], int size, int value){
-  for(int walker = 1; walker<size; walker++){
+void Marcov::array_insert_end(std::vector<int> &array, int maxsize, int value){
+  for(int walker = 1; (walker<maxsize); walker++){
     array[walker-1] = array[walker];
   }
-  array[size-1] = value;
+  if(array.size()<maxsize)array.push_back(value);
+  else array[maxsize-1] = value;
 }
 void Marcov::printAlgorithm(){
   if(marcov_alg.size()==0){

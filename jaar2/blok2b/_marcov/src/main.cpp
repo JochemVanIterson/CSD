@@ -21,16 +21,24 @@ int main(int argc,char **argv){
   smf::Options options;
   options.process(argc, argv);
 
-  Marcov melody;
+  int marcovSize = 1;
 
   std::string midiFileName = "";
-  std::cout << "Midi File: ";
-  if (options.getArgCount() == 0){
+  if (options.getArgCount() != 2){
+    std::cout << "Midi File: ";
     std::cin >> midiFileName;
+
+    std::cout << "Marcov type: ";
+    std::cin >> marcovSize;
   } else {
-    midiFileName = options.getArg(1);
-    std::cout << midiFileName << std::endl;
+    marcovSize = std::stoi(options.getArg(1));
+    std::cout << "Marcov type: " << marcovSize << std::endl;
+
+    midiFileName = options.getArg(2);
+    std::cout << "Midi File: " << midiFileName << std::endl;
   }
+
+  Marcov melody(marcovSize);
 
   melody.learnMarcov(midiFileName);
 
