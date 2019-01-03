@@ -1,51 +1,46 @@
-#include "melody.h"
+#include "melody_provider.h"
 
 // -------------------------------------------------------------------------- //
 // ------------------------ Constructor & Destructor ------------------------ //
 // -------------------------------------------------------------------------- //
-Melody::Melody(){
-  std::cout << "Melody::Melody()" << std::endl;
+MelodyProvider::MelodyProvider(){
+  std::cout << "MelodyProvider::MelodyProvider()" << std::endl;
   readIndex = 0;
-  writeIndex = 0;
 }
-Melody::~Melody(){
-  std::cout << "Melody::~Melody()" << std::endl;
+MelodyProvider::~MelodyProvider(){
+  std::cout << "MelodyProvider::~MelodyProvider()" << std::endl;
 }
 
 // -------------------------------------------------------------------------- //
 // ------------------------------- Functions -------------------------------- //
 // -------------------------------------------------------------------------- //
-int Melody::getNote(){
-  if(readIndex!=(writeIndex)){
+int MelodyProvider::getNote(){
+  if(readIndex!=notes.size()){
     int value = notes[readIndex];
-    readIndex = (readIndex+1) % NUM_NOTES;
+    readIndex++;
     return value;
+  } else if(loop){
+    readIndex = 0;
+    return getNote();
   } else {
     return -1;
   }
 }
-void Melody::addNote(int note){
-  std::cout << readIndex << ":" << writeIndex << std::endl;
-  if(note<=0){
-    std::cout << "Negative note " << note << std::endl;
-    return;
-  }
-  if(writeIndex!=(readIndex-1)){
-    notes[writeIndex] = note;
-    writeIndex = (writeIndex+1) % NUM_NOTES;
-  } else {
-    std::cout << "void Melody::addNote(int note): Couldn't add note " << note << std::endl;
-  }
+void MelodyProvider::addNote(int note){
+  notes.push_back(note);
 }
-void Melody::printList(){
+void MelodyProvider::printList(){
   std::cout << "void Melody::printList():" << std::endl;
 
   std::cout << "\treadIndex: " << readIndex << "-> " << notes[readIndex] << std::endl;
-  std::cout << "\twriteIndex: " << writeIndex << "-> " << notes[writeIndex] << std::endl;
+  std::cout << "\twriteIndex: " << notes.size() << "-> " << notes[notes.size()-1] << std::endl;
 
   int walker = 0;
-  while(walker<NUM_NOTES) {
+  while(walker<notes.size()) {
     std::cout << "\t" << walker << ": "<< notes[walker] << std::endl;
     walker++;
   }
+}
+void MelodyProvider::setLoop(bool loop){
+  this->loop = loop;
 }

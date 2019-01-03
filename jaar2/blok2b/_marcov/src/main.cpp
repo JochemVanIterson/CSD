@@ -2,8 +2,9 @@
 #include <stdio.h>
 #include <thread>
 
+#include "midi/Options.h"
+
 #include "jack/jack_module.h"
-#include "melody/melody.h"
 #include "melody/marcov.h"
 
 
@@ -41,11 +42,15 @@ int main(int argc,char **argv){
   Marcov melody(marcovSize);
 
   melody.learnMarcov(midiFileName);
+  melody.initMelody();
 
+  melody.addNote();
+  melody.addNote();
+  melody.addNote();
   // melody.printList();
-  melody.addNote(10);
+  // melody.addNote(10);
   // melody.addNote(20);
-  // melody.printList();
+  melody.printList();
   std::cout << "Value: " << melody.getNote() << std::endl;
   // melody.printList();
   // melody.addNote(30);

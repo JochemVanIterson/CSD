@@ -5,26 +5,28 @@
 #include <map>
 #include <iomanip>
 #include <string>
+#include <random>
+#include <sstream>
+#include "../tools/tools.h"
 
-#include "melody.h"
+#include "melody_provider.h"
 
-#include "../midi/MidiFile.h"
-#include "../midi/Options.h"
+#include "../midi/midiProvider.h"
 
-class Marcov : public Melody{
+class Marcov : public MelodyProvider{
 public:
   Marcov(int marcovSize);
   ~Marcov();
 
-  int getNote();
+  void addNote();
+
   void learnMarcov(std::string filename);
+  void initMelody();
   void printAlgorithm();
 private:
   int marcovSize;
   std::map<std::string, std::map<std::string, int>> marcov_alg;
-  std::vector<int> note_history;
-  std::string array2string(std::vector<int> &writableArray, std::string delimiter);
-  void array_insert_end(std::vector<int> &array, int maxsize, int value);
+  int getSuccessor();
 };
 
 #endif

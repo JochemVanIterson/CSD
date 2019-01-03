@@ -1,17 +1,14 @@
 #ifndef _MELODY_H
 #define _MELODY_H
 
-#define NUM_NOTES 10
-
 #include <iostream>
-#include <stdio.h>
+#include <vector>
 
-class Melody
-{
+class MelodyProvider{
 public:
   // constructor and destructor
-  Melody();
-  virtual ~Melody();
+  MelodyProvider();
+  ~MelodyProvider();
 
   // returns the note at the readIndex
   // returns -1 when there is no note available
@@ -19,13 +16,14 @@ public:
   // adds a note to the melody (only if 'spots' are available)
   void addNote(int note);
   void printList();
-
-private:
+  void setLoop(bool loop);
+protected:
   // integer array containing the note values
-  int notes[NUM_NOTES] = {0};
+  std::vector<int> notes;
+private:
   // read and write index
   int readIndex;
-  int writeIndex;
+  bool loop = false;
 };
 
 #endif

@@ -12,8 +12,11 @@ all: $(OUT)
 _OBJS = \
 	main.o \
 	jack/jack_module.o \
-	melody/melody.o \
+	tools/tools.o \
+	melody/melody_provider.o \
 	melody/marcov.o \
+	melody/sequencer.o \
+	midi/midiProvider.o \
 	midi/libmidifile.a
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
