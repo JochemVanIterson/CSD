@@ -6,7 +6,7 @@
 
 #include "jack/jack_module.h"
 #include "melody/marcov.h"
-
+#include "tools/tools.h"
 
 /*
  * NOTE: jack2 needs to be installed
@@ -24,6 +24,9 @@ int main(int argc,char **argv){
 
   int marcovSize = 1;
 
+  std::cout << "Note: " << 50 << " Freq: " << Tools::midinote2freq(50) << std::endl;
+
+  return(0);
   std::string midiFileName = "";
   if (options.getArgCount() != 2){
     std::cout << "Midi File: ";

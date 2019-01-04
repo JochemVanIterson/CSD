@@ -7,6 +7,7 @@
 #include <string>
 #include <random>
 #include <sstream>
+#include <cmath>
 
 class Tools{
 public:
@@ -18,6 +19,7 @@ public:
   static void array_insert_end(std::vector<int> &array, int maxsize, int value);
   static int rand_between(int min, int max);
   static void printVectorInt(std::string name, std::vector<int> &array);
+  static double midinote2freq(int midinote);
 };
 
 #endif

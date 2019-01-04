@@ -37,3 +37,7 @@ void Tools::printVectorInt(std::string name, std::vector<int> &array){
   }
   std::cout << std::endl;
 }
+double Tools::midinote2freq(int midinote){
+  double freq = pow(2.0, ((midinote-69)/12.))*440.0;
+  return freq;
+}
