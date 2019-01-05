@@ -15,6 +15,7 @@ _OBJS = \
 	tools/tools.o \
 	melody/melody_provider.o \
 	melody/marcov.o \
+	melody/midiplayer.o \
 	melody/sequencer.o \
 	midi/midiProvider.o \
 	midi/libmidifile.a

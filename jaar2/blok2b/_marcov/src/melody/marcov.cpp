@@ -50,6 +50,7 @@ void Marcov::learnMarcov(std::string filename){
   printAlgorithm();
 }
 void Marcov::initMelody(){
+  // ----------- Chooses random itm from the list ----------- //
   auto it = marcov_alg.begin();
   int random_int = Tools::rand_between(0, marcov_alg.size());
   std::advance(it, random_int);
@@ -62,7 +63,6 @@ void Marcov::initMelody(){
     std::cout << "note: " << itm << std::endl;
   }
 }
-
 void Marcov::printAlgorithm(){
   if(marcov_alg.size()==0){
     std::cout << "No algorithm set" << std::endl;
@@ -81,6 +81,9 @@ void Marcov::printAlgorithm(){
 }
 
 int Marcov::getSuccessor(){
+  // takes the last <marcovSize> items from the note list, and calculates the
+  // successing note.
+
   std::vector<int> note_history;
   for(int walker = notes.size()-marcovSize; walker < notes.size(); walker++){
     note_history.push_back(notes[walker]);

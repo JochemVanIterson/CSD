@@ -6,6 +6,7 @@
 
 #include "jack/jack_module.h"
 #include "melody/marcov.h"
+#include "melody/midiplayer.h"
 #include "tools/tools.h"
 
 /*
@@ -26,7 +27,7 @@ int main(int argc,char **argv){
 
   std::cout << "Note: " << 50 << " Freq: " << Tools::midinote2freq(50) << std::endl;
 
-  return(0);
+  // --------------------------------------- Parameters --------------------------------------- //
   std::string midiFileName = "";
   if (options.getArgCount() != 2){
     std::cout << "Midi File: ";
@@ -42,25 +43,24 @@ int main(int argc,char **argv){
     std::cout << "Midi File: " << midiFileName << std::endl;
   }
 
-  Marcov melody(marcovSize);
+  // --------------------------------------- Marcov melody --------------------------------------- //
+  Marcov melodyMarcov(marcovSize);
 
-  melody.learnMarcov(midiFileName);
-  melody.initMelody();
+  melodyMarcov.learnMarcov(midiFileName);
+  melodyMarcov.initMelody();
 
-  melody.addNote();
-  melody.addNote();
-  melody.addNote();
-  // melody.printList();
-  // melody.addNote(10);
-  // melody.addNote(20);
-  melody.printList();
-  std::cout << "Value: " << melody.getNote() << std::endl;
-  // melody.printList();
-  // melody.addNote(30);
-  // std::cout << "Value: " << melody.getNote() << std::endl;
-  // std::cout << "Value: " << melody.getNote() << std::endl;
-  // std::cout << "Value: " << melody.getNote() << std::endl;
-  // melody.printList();
+  melodyMarcov.addNote();
+  melodyMarcov.addNote();
+  melodyMarcov.addNote();
+  melodyMarcov.printList();
+  std::cout << "Value: " << melodyMarcov.getNote() << std::endl;
+
+  // --------------------------------------- Marcov melody --------------------------------------- //
+  MidiPlayer melodyMidi(midiFileName);
+  melodyMidi.printList();
+  std::cout << "Value: " << melodyMidi.getNote() << std::endl;
+
+
 
   // --------------------------------------- Jack --------------------------------------- //
   /*
