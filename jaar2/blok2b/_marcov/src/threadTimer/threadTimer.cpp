@@ -32,7 +32,7 @@ void ThreadTimer::threadCallable(){
     if(newBufNote!=-1)sequencer->addNote(newBufNote);
 
     int newPlayNote = sequencer->getNote();
-    if(newPlayNote!=-1)oscVoice->noteOn(newPlayNote, 1.);
+    if(newPlayNote!=-1)oscVoice->noteOn(newPlayNote, 1., 400.0);
 
     sleep_for(delayTime*(1ms));
   }

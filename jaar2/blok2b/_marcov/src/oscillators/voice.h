@@ -9,6 +9,8 @@
 
 #include <cmath>
 #include <string>
+#include <chrono>
+#include <thread>
 
 class Voice {
 public:
@@ -20,7 +22,9 @@ public:
   double getFrequency();
   void setType(std::string type);
 
+  void noteOn(int midiNote, double amplitude, double duration);
   void noteOn(int midiNote, double amplitude);
+  void noteOn();
   void noteOff();
 
   // Parsed to *oscillator
@@ -34,7 +38,11 @@ private:
   double amplitude = 0.;
   double samplerate;
   double frequency;
+  double duration;
   double m2f(int midiNote);
+
+  std::thread *noteOffThread;
+  void noteOffThreadCallable();
 };
 
 #endif

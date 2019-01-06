@@ -65,8 +65,7 @@ int main(int argc,char **argv){
   jack.init(argv[0]); // init the jack, use program name as JACK client name
   double samplerate = jack.getSamplerate();
 
-  Voice oscVoice(samplerate, "sine");
-  // oscVoice.noteOn(64, 1.);
+  Voice oscVoice(samplerate, "square");
 
   //assign a function to the JackModule::onProces
   jack.onProcess = [&oscVoice](jack_default_audio_sample_t *inBuf, jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
@@ -82,7 +81,7 @@ int main(int argc,char **argv){
   };
   jack.autoConnect();
 
-  ThreadTimer timer(&sequencer, &melodyMarcov, &oscVoice, 500.0);
+  ThreadTimer timer(&sequencer, &melodyMidi, &oscVoice, 500.0);
   timer.startThread();
 
   // --------------------------------------- Jack --------------------------------------- //
