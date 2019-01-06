@@ -19,6 +19,7 @@ public:
   ~Marcov();
 
   void addNote();
+  int getNote();
 
   void learnMarcov(std::string filename);
   void initMelody();

@@ -8,6 +8,9 @@
 #include "melody/marcov.h"
 #include "melody/midiplayer.h"
 #include "tools/tools.h"
+#include "threadTimer/threadTimer.h"
+
+#include "oscillators/voice.h"
 
 /*
  * NOTE: jack2 needs to be installed
@@ -23,18 +26,18 @@ int main(int argc,char **argv){
   smf::Options options;
   options.process(argc, argv);
 
-  int marcovSize = 1;
-
-  std::cout << "Note: " << 50 << " Freq: " << Tools::midinote2freq(50) << std::endl;
-
   // --------------------------------------- Parameters --------------------------------------- //
+  int marcovSize = 1;
   std::string midiFileName = "";
-  if (options.getArgCount() != 2){
+  if (options.getArgCount() == 0){
     std::cout << "Midi File: ";
     std::cin >> midiFileName;
 
     std::cout << "Marcov type: ";
     std::cin >> marcovSize;
+  } else if (options.getArgCount() != 2){
+    std::cout << "Usage: " << options.getArg(0) << " <marcovSize> <midifile>" << std::endl;
+    return(0);
   } else {
     marcovSize = std::stoi(options.getArg(1));
     std::cout << "Marcov type: " << marcovSize << std::endl;
@@ -43,44 +46,45 @@ int main(int argc,char **argv){
     std::cout << "Midi File: " << midiFileName << std::endl;
   }
 
+  std::cout << "Note: " << 50 << " Freq: " << Tools::midinote2freq(50) << std::endl;
+
   // --------------------------------------- Marcov melody --------------------------------------- //
   Marcov melodyMarcov(marcovSize);
 
   melodyMarcov.learnMarcov(midiFileName);
   melodyMarcov.initMelody();
 
-  melodyMarcov.addNote();
-  melodyMarcov.addNote();
-  melodyMarcov.addNote();
-  melodyMarcov.printList();
-  std::cout << "Value: " << melodyMarcov.getNote() << std::endl;
-
-  // --------------------------------------- Marcov melody --------------------------------------- //
+  // --------------------------------------- Midi melody --------------------------------------- //
   MidiPlayer melodyMidi(midiFileName);
   melodyMidi.printList();
-  std::cout << "Value: " << melodyMidi.getNote() << std::endl;
 
-
+  Sequencer sequencer;
 
   // --------------------------------------- Jack --------------------------------------- //
-  /*
-  // create a JackModule instance
-  JackModule jack;
-
-  // init the jack, use program name as JACK client name
-  jack.init(argv[0]);
+  JackModule jack; // create a JackModule instance
+  jack.init(argv[0]); // init the jack, use program name as JACK client name
   double samplerate = jack.getSamplerate();
 
+  Voice oscVoice(samplerate, "sine");
+  // oscVoice.noteOn(64, 1.);
+
   //assign a function to the JackModule::onProces
-  jack.onProcess = [](jack_default_audio_sample_t *inBuf, jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
+  jack.onProcess = [&oscVoice](jack_default_audio_sample_t *inBuf, jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
+    static double amplitude = 0.5;
+
     for(unsigned int i = 0; i < nframes; i++) {
       // write sine output * amplitude --> to output buffer
+      outBuf[i] = amplitude * oscVoice.getSample();
       // calculate next sample
+      oscVoice.tick();
     }
     return 0;
   };
   jack.autoConnect();
-  */
+
+  ThreadTimer timer(&sequencer, &melodyMarcov, &oscVoice, 500.0);
+  timer.startThread();
+
   // --------------------------------------- Jack --------------------------------------- //
 
   //keep the program running and listen for user input, q = quit
@@ -97,9 +101,7 @@ int main(int argc,char **argv){
     char input = std::getchar();
     if(input=='q'){
       running = false;
-      // --------------------------------------- Jack --------------------------------------- //
-      // jack.end();
-      // --------------------------------------- Jack --------------------------------------- //
+      jack.end();
     }
 
     // Reset terminal to normal "cooked" mode

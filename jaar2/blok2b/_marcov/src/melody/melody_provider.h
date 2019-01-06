@@ -12,9 +12,9 @@ public:
 
   // returns the note at the readIndex
   // returns -1 when there is no note available
-  int getNote();
+  virtual int getNote();
   // adds a note to the melody (only if 'spots' are available)
-  void addNote(int note);
+  virtual void addNote(int note);
   void printList();
   void setLoop(bool loop);
 protected:

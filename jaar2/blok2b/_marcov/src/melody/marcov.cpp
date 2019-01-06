@@ -19,6 +19,12 @@ void Marcov::addNote(){
   int value = getSuccessor();
   MelodyProvider::addNote(value);
 }
+int Marcov::getNote(){
+  std::cout << "int Marcov::getNote()" << std::endl;
+  addNote();
+  return MelodyProvider::getNote();
+}
+
 
 // -------------------------------------------------------------------------- //
 // ------------------------------- Functions -------------------------------- //
