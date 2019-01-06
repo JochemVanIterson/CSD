@@ -1,6 +1,6 @@
 #include "voice.h"
 Voice::Voice(){
-  
+
 }
 Voice::Voice(double samplerate, std::string type){
   this->samplerate = samplerate;
@@ -35,7 +35,8 @@ void Voice::noteOff(){
 }
 
 double Voice::getSample(){
-  return oscillator->getSample();
+  if(isPlaying) return oscillator->getSample();
+  else return 0.;
 }
 void Voice::tick(){
   oscillator->tick();
