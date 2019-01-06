@@ -30,6 +30,9 @@ void Voice::noteOn(int midiNote, double amplitude){
   this->amplitude = amplitude;
   this->isPlaying = true;
 }
+void Voice::noteOn(){
+  this->isPlaying = true;
+}
 void Voice::noteOff(){
   this->isPlaying = false;
 }
