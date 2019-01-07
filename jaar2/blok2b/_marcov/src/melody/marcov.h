@@ -25,6 +25,7 @@ public:
   void initMelody();
   void printAlgorithm();
 private:
+  using MelodyProvider::addNote;
   int marcovSize;
   std::map<std::string, std::map<std::string, int>> marcov_alg;
   int getSuccessor();

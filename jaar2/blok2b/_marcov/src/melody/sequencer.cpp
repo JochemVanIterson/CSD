@@ -4,12 +4,10 @@
 // ------------------------ Constructor & Destructor ------------------------ //
 // -------------------------------------------------------------------------- //
 Sequencer::Sequencer(){
-  std::cout << "Sequencer::Sequencer()" << std::endl;
   readIndex = 0;
   writeIndex = 0;
 }
 Sequencer::~Sequencer(){
-  std::cout << "Sequencer::~Sequencer()" << std::endl;
 }
 
 // -------------------------------------------------------------------------- //
@@ -25,7 +23,6 @@ int Sequencer::getNote(){
   }
 }
 void Sequencer::addNote(int note){
-  std::cout << readIndex << ":" << writeIndex << std::endl;
   if(note<=0){
     std::cout << "Negative note " << note << std::endl;
     return;
@@ -38,8 +35,6 @@ void Sequencer::addNote(int note){
   }
 }
 void Sequencer::printList(){
-  std::cout << "void Sequencer::printList():" << std::endl;
-
   std::cout << "\treadIndex: " << readIndex << "-> " << notes[readIndex] << std::endl;
   std::cout << "\twriteIndex: " << writeIndex << "-> " << notes[writeIndex] << std::endl;
 

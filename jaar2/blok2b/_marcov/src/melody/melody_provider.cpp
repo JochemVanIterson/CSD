@@ -4,11 +4,9 @@
 // ------------------------ Constructor & Destructor ------------------------ //
 // -------------------------------------------------------------------------- //
 MelodyProvider::MelodyProvider(){
-  std::cout << "MelodyProvider::MelodyProvider()" << std::endl;
   readIndex = 0;
 }
 MelodyProvider::~MelodyProvider(){
-  std::cout << "MelodyProvider::~MelodyProvider()" << std::endl;
 }
 
 // -------------------------------------------------------------------------- //

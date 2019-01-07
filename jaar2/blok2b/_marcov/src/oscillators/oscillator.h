@@ -15,9 +15,9 @@ public:
   //return the current sample
   double getSample();
   // go to next sample
-  void tick();
+  virtual void tick();
   //getters and setters
-  void setFrequency(double frequency);
+  virtual void setFrequency(double frequency);
   double getFrequency();
 
   //NOTE - do we need a setter for phase? for now -> not using one

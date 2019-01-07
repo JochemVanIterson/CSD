@@ -4,27 +4,22 @@
 // ------------------------ Constructor & Destructor ------------------------ //
 // -------------------------------------------------------------------------- //
 Marcov::Marcov(int marcovSize):MelodyProvider(){
-  std::cout << "Marcov::Marcov()" << std::endl;
   this->marcovSize = marcovSize;
 }
 Marcov::~Marcov(){
-  std::cout << "Marcov::~Marcov()" << std::endl;
 }
 
 // -------------------------------------------------------------------------- //
 // ------------------------------- Overwrites ------------------------------- //
 // -------------------------------------------------------------------------- //
 void Marcov::addNote(){
-  std::cout << "int Marcov::addNote()" << std::endl;
   int value = getSuccessor();
   MelodyProvider::addNote(value);
 }
 int Marcov::getNote(){
-  std::cout << "int Marcov::getNote()" << std::endl;
   addNote();
   return MelodyProvider::getNote();
 }
-
 
 // -------------------------------------------------------------------------- //
 // ------------------------------- Functions -------------------------------- //
@@ -34,7 +29,7 @@ int Marcov::getNote(){
 void Marcov::learnMarcov(std::string filename){
   MidiProvider midiProvider(filename);
   std::vector<int> notes = midiProvider.getNotes(0);
-  Tools::printVectorInt("notes", notes);
+  // Tools::printVectorInt("notes", notes);
 
   std::vector<int> marcov_hist(marcovSize);
   std::string marcov_hist_str = "leeg";
@@ -45,10 +40,8 @@ void Marcov::learnMarcov(std::string filename){
     int walkerMod = walker % notes.size();
     int note = notes[walkerMod];
     marcov_hist_str = Tools::array2string(marcov_hist, ',');
-    std::cout << marcov_hist_str << std::endl;
     if(marcov_hist.size()!=0 && marcov_hist[0]!=0){
       marcov_alg[marcov_hist_str][std::to_string(note)]++;
-      std::cout << walkerMod << " -> " << "inserted: " << marcov_hist_str << " Note:" << note << std::endl;
     }
     Tools::array_insert_end(marcov_hist, marcovSize, note);
   }
@@ -66,7 +59,6 @@ void Marcov::initMelody(){
 
   for(int itm : note_history){
     MelodyProvider::addNote(itm);
-    std::cout << "note: " << itm << std::endl;
   }
 }
 void Marcov::printAlgorithm(){
@@ -87,8 +79,7 @@ void Marcov::printAlgorithm(){
 }
 
 int Marcov::getSuccessor(){
-  // takes the last <marcovSize> items from the note list, and calculates the
-  // successing note.
+  // takes the last <marcovSize> items from the note list, and calculates the successing note.
 
   std::vector<int> note_history;
   for(int walker = notes.size()-marcovSize; walker < notes.size(); walker++){
@@ -107,8 +98,5 @@ int Marcov::getSuccessor(){
   int random_int = Tools::rand_between(0, MarcovOptionsArray.size());
   int random_note = MarcovOptionsArray[random_int];
 
-  std::cout << "Get Successor Value: " << note_history_str << std::endl;
-  std::cout << "Get Successor options: " << random_note << std::endl;
-  std::cout << "Get Successor size: " << MarcovOptionsArray.size() << std::endl;
   return random_note;
 }

@@ -6,6 +6,7 @@
 #include "waveforms/saw.h"
 #include "waveforms/square.h"
 #include "waveforms/triangle.h"
+#include "waveforms/fm_osc.h"
 
 #include <cmath>
 #include <string>

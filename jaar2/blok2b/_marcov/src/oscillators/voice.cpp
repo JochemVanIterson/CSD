@@ -18,9 +18,10 @@ void Voice::setType(std::string type){
   else if(type=="saw")oscillator = new Saw(samplerate, frequency);
   else if(type=="square")oscillator = new Square(samplerate, frequency);
   else if(type=="triangle")oscillator = new Triangle(samplerate, frequency);
+  else if(type=="fm")oscillator = new FMOsc(samplerate, frequency, 5., 1.);
   else {
     oscillator = new Sine(samplerate, frequency);
-    std::cout << "Unknown type" << std::endl;
+    std::cout << "Unknown Oscillator type" << std::endl;
   }
 }
 
@@ -37,10 +38,10 @@ void Voice::noteOn(int midiNote, double amplitude, double duration){
   this->isPlaying = true;
   this->duration = duration;
   noteOffThread = new std::thread( [=] { noteOffThreadCallable(); } );
-  // std::cout << duration << std::endl;
 }
 
 void Voice::noteOn(){
+  if(isPlaying)noteOff();
   this->isPlaying = true;
 }
 void Voice::noteOff(){
@@ -62,7 +63,6 @@ double Voice::m2f(int midiNote){
 }
 
 void Voice::noteOffThreadCallable(){
-  std::cout << "noteOffThreadCallable" << std::endl;
   using namespace std::this_thread;     // sleep_for, sleep_until
   using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
   using std::chrono::system_clock;

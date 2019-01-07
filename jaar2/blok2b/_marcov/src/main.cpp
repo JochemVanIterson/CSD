@@ -20,7 +20,7 @@
  * jackd -d coreaudio
  */
 
-// #define PI_2 6.28318530717959
+int keyOctave = 5;
 
 int main(int argc,char **argv){
   smf::Options options;
@@ -45,8 +45,7 @@ int main(int argc,char **argv){
     midiFileName = options.getArg(2);
     std::cout << "Midi File: " << midiFileName << std::endl;
   }
-
-  std::cout << "Note: " << 50 << " Freq: " << Tools::midinote2freq(50) << std::endl;
+  Tools::init_rand();
 
   // --------------------------------------- Marcov melody --------------------------------------- //
   Marcov melodyMarcov(marcovSize);
@@ -65,23 +64,24 @@ int main(int argc,char **argv){
   jack.init(argv[0]); // init the jack, use program name as JACK client name
   double samplerate = jack.getSamplerate();
 
-  Voice oscVoice(samplerate, "square");
+  Voice oscVoice(samplerate, "fm");
+  Voice keyVoice(samplerate, "fm");
 
   //assign a function to the JackModule::onProces
-  jack.onProcess = [&oscVoice](jack_default_audio_sample_t *inBuf, jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
-    static double amplitude = 0.5;
+  jack.onProcess = [&oscVoice, &keyVoice](jack_default_audio_sample_t *inBuf, jack_default_audio_sample_t *outBuf, jack_nframes_t nframes) {
 
     for(unsigned int i = 0; i < nframes; i++) {
       // write sine output * amplitude --> to output buffer
-      outBuf[i] = amplitude * oscVoice.getSample();
+      outBuf[i] = oscVoice.getSample() + keyVoice.getSample();
       // calculate next sample
       oscVoice.tick();
+      keyVoice.tick();
     }
     return 0;
   };
   jack.autoConnect();
 
-  ThreadTimer timer(&sequencer, &melodyMidi, &oscVoice, 500.0);
+  ThreadTimer timer(&sequencer, &melodyMarcov, &oscVoice, 500.0);
   timer.startThread();
 
   // --------------------------------------- Jack --------------------------------------- //
@@ -91,20 +91,42 @@ int main(int argc,char **argv){
   bool running = true;
   while (running){
     // Output prompt
-    // std::cout << "Press any key to continue..." << std::endl;
-
     // Set terminal to raw mode
-    // std::system("stty raw");
+    std::system("stty raw");
 
     // Wait for single character
     char input = std::getchar();
     if(input=='q'){
       running = false;
       jack.end();
+    } else if(input=='z'){
+      keyOctave--;
+    } else if(input=='x'){
+      keyOctave++;
+    } else if(input=='1'){
+      oscVoice.setType("sine");
+      keyVoice.setType("sine");
+    } else if(input=='2'){
+      oscVoice.setType("saw");
+      keyVoice.setType("saw");
+    } else if(input=='3'){
+      oscVoice.setType("square");
+      keyVoice.setType("square");
+    } else if(input=='4'){
+      oscVoice.setType("triangle");
+      keyVoice.setType("triangle");
+    } else if(input=='5'){
+      oscVoice.setType("fm");
+      keyVoice.setType("fm");
+    } else {
+      int keymidiValue = Tools::keymidi(input);
+      if(keymidiValue!=-1){
+        keyVoice.noteOn((12*keyOctave)+keymidiValue, .2, 200.);
+      }
     }
 
     // Reset terminal to normal "cooked" mode
-    // std::system("stty cooked");
+    std::system("stty cooked");
   }
 
   //end the program

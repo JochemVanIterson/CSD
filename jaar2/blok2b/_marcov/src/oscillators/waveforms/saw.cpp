@@ -5,15 +5,10 @@
 Saw::Saw(double samplerate, double frequency) :
   Oscillator(samplerate, frequency)
 {
-  // TODO - use setFrequency and phase instead, to prevent outrange values
-  // std::cout << "\nInside Saw::oscillator (double frequency, double phase)"
-  //   << "\nfrequency: " << frequency
-  //   << "\nphase: " << phase;
 }
 
 Saw::~Saw()
 {
-  // std::cout << "\nInside Saw::~Saw";
 }
 
 

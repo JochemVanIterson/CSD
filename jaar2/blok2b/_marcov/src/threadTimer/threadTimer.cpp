@@ -26,8 +26,6 @@ void ThreadTimer::threadCallable(){
   using namespace std::chrono_literals; // ns, us, ms, s, h, etc.
   using std::chrono::system_clock;
   while(running){
-    std::cout<<"Thread Loop"<<std::endl;
-
     int newBufNote = provider->getNote();
     if(newBufNote!=-1)sequencer->addNote(newBufNote);
 

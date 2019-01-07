@@ -7,14 +7,10 @@ Oscillator::Oscillator(double samplerate, double frequency) :
   phase(0),
   sample(0)
 {
-  // TODO - use setFrequency and phase instead, to prevent outrange values
-  // std::cout << "Inside Oscillator::Oscillator (double frequency, double phase)"
-  //   << "\nfrequency: " << frequency
-  //   << "\nphase: " << phase  << std::endl;
+
 }
 
 Oscillator::~Oscillator(){
-  // std::cout << "Inside Oscillator::~Oscillator" << std::endl;
 }
 
 double Oscillator::getSample() { return sample; }

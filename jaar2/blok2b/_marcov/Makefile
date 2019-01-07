@@ -25,7 +25,8 @@ _OBJS = \
 	oscillators/waveforms/sine.o \
 	oscillators/waveforms/square.o \
 	oscillators/waveforms/saw.o \
-	oscillators/waveforms/triangle.o
+	oscillators/waveforms/triangle.o \
+	oscillators/waveforms/fm_osc.o
 
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
