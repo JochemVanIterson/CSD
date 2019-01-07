@@ -1,0 +1,5 @@
+TODO:
+- Pure random melodygenerator
+- (Better) user interface which can:
+  - Choose between melodyproviders at startThread
+  - Executable commands

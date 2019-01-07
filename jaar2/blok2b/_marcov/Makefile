@@ -31,16 +31,17 @@ _OBJS = \
 OBJS = $(patsubst %,$(ODIR)/%,$(_OBJS))
 
 $(ODIR)/%.o: $(SDIR)/%.cpp
-	@if [ ! -d $(@D) ]; then mkdir -p $(@D); echo "create folder $(@D)"; fi
-	$(CXX) $(CFLAGS) -c $(INC) -o $@ $< $(CFLAGS)
+	@if [ ! -d $(@D) ]; then mkdir -p $(@D); echo "entering folder $(@D)"; fi
+	@echo "building $<"; $(CXX) $(CFLAGS) -c $(INC) -o $@ $< $(CFLAGS)
 
 $(ODIR)/%.a: $(SDIR)/%.a
 	@if [ ! -d $(@D) ]; then mkdir -p $(@D); fi
-	cp $< $@
+	@echo "copying library $<"; cp $< $@
 
 $(OUT): $(OBJS)
 	@echo "Linking files";
-	@$(CXX) $(LDFLAGS) -o $(OUT) $^
+	@$(CXX) $(LDFLAGS) -o $(OUT) $^;
+	@echo "\nBuild complete\nRun $(OUT)"
 
 .PHONY: clean
 
