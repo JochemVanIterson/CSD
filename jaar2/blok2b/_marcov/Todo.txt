@@ -1,5 +1,8 @@
 TODO:
-- Pure random melodygenerator
 - (Better) user interface which can:
   - Choose between melodyproviders at startThread
   - Executable commands
+- No clicks when note off (use zero crossing)
+- Pure random melodygenerator
+- Rhythm
+- Envelope
